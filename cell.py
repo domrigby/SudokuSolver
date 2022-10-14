@@ -34,7 +34,7 @@ class Cell():
 
     def found(self,num):
         self.val = num
-        self.known == True
+        self.known = True
         print(self.val)
 
         # update row and column objects
@@ -43,4 +43,7 @@ class Cell():
         self.box.addNumber(self.val)
 
         self.grid.updateGrid(self.pos,self.val)
+
+    def newNot(self,val):
+        self.potentialNumbers.remove(val)
 
