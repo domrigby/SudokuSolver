@@ -3,18 +3,23 @@ import numpy as np
 
 class LineOrBox():
 
-    def __init__(self,numbers,ID):
+    def __init__(self,cellList,ID):
         
         self.numbers = []
+        self.cellList = cellList
 
         self.ID = ID
 
-        if len(numbers) != 9:
-            numbers = list(itertools.chain(*numbers)) # flattens list if it is not flat
+        cellList = np.array(cellList)
 
-        for number in numbers:
-            if number != 0 : # 0s are placeholds in this array
-                self.numbers.append(number)
+        cellList = cellList.flatten()
+
+        for cell in cellList:
+            if isinstance(cell,np.int64):
+                self.numbers.append(cell)
+            elif cell.val: # filters out 0 values
+                self.numbers.append(cell.val)
+
         self.numbers.sort()
 
         self.findMissing()
@@ -26,3 +31,9 @@ class LineOrBox():
     def addNumber(self,number):
         self.numbers.append(number)
         self.missingNumbers.remove(number)
+
+    def checkCells(self):
+        for cell in self.cellList:
+            if cell.val and cell.val not in cell.numbers:
+                self.numbers.append(cell.val)
+                self.missingNumbers.remove(cell.val)

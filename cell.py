@@ -34,7 +34,7 @@ class Cell():
 
     def found(self,num):
         self.val = num
-        self.known == True
+        self.known = True
         print(self.val)
 
         # update row and column objects
