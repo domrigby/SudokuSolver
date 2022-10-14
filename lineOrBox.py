@@ -21,7 +21,6 @@ class LineOrBox():
                 self.numbers.append(cell.val)
 
         self.numbers.sort()
-
         self.findMissing()
 
     def findMissing(self):
@@ -34,6 +33,24 @@ class LineOrBox():
 
     def checkCells(self):
         for cell in self.cellList:
-            if cell.val and cell.val not in cell.numbers:
+            if cell.val and cell.val not in self.numbers:
                 self.numbers.append(cell.val)
                 self.missingNumbers.remove(cell.val)
+
+    def returnPosOfPossible(self,num):
+        positions = []
+        if len(self.cellList.shape) == 1:
+            for cell in self.cellList:
+                if not cell.val and num in cell.potentialNumbers:
+                    positions.append(cell.pos)
+        else:
+            for row in self.cellList:
+                for cell in row:
+                    if not cell.val and num in cell.potentialNumbers: # check the cell hasnt yet been discovered and 
+                        positions.append(cell.pos)
+
+        if not positions:
+            print(num, self.missingNumbers)
+        
+        positions = np.array(positions)
+        return positions

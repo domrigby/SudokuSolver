@@ -44,3 +44,6 @@ class Cell():
 
         self.grid.updateGrid(self.pos,self.val)
 
+    def newNot(self,val):
+        self.potentialNumbers.remove(val)
+

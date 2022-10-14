@@ -80,9 +80,39 @@ class Grid:
         self.colNums = [[0,3,6],[1,4,7],[2,5,8]]
 
         for row in self.rowNums:
-            if len(np.intersect1d(self.boxDict[row[0]].missingNumbers,self.boxDict[row[1]].missingNumbers,self.boxDict[row[2]].missingNumbers)) > 0:
-                print("Possible here")
+            commonMissing = np.intersect1d(self.boxDict[row[0]].missingNumbers,self.boxDict[row[1]].missingNumbers)
+            commonMissing = np.intersect1d(commonMissing,self.boxDict[row[2]].missingNumbers)
+            #print("common missing:" ,commonMissing)
+            if len(commonMissing) > 0:
+                for possible in commonMissing: # this is the number that could possibly create a box row interaction
+                    for rowNum in range(len(row)):
+                        positions = self.boxDict[row[rowNum]].returnPosOfPossible(possible) # dont know how long positions will be, just longer than 1
+                        rows = positions[:,0] # this gives all the row numbers
+                        result = np.all(rows == rows[0]) # checks if all values are in same row
+                        if result:
+                            for num in row: # iterate across the boxes
+                                if num != row[0]: # dont do for this box
+                                    for cell in self.boxDict[num].cellList.flatten(): # we want to iterative through all the cells in the box
+                                        if cell.pos[0] == rows[0] and possible in cell.potentialNumbers:
+                                            print("New clue! From ",self.boxDict[num].ID)
+                                            cell.newNot(possible)
+                        
         
+        # The following part should really be a function, I will change it over when I can be bothered
         for col in self.colNums:
-            if len(np.intersect1d(self.boxDict[col[0]].missingNumbers,self.boxDict[col[1]].missingNumbers,self.boxDict[col[2]].missingNumbers)) > 0:
-                print("possible")
+            commonMissing = np.intersect1d(self.boxDict[col[0]].missingNumbers,self.boxDict[col[1]].missingNumbers)
+            commonMissing = np.intersect1d(commonMissing,self.boxDict[col[2]].missingNumbers)
+            #print("common missing:" ,commonMissing)
+            if len(commonMissing) > 0:
+                for possible in commonMissing: # this is the number that could possibly create a box col interaction
+                    for colNum in range(len(col)):
+                        positions = self.boxDict[col[colNum]].returnPosOfPossible(possible) # dont know how long positions will be, just longer than 1
+                        cols = positions[:,1] # this gives all the col numbers
+                        result = np.all(cols == cols[0]) # checks if all values are in same col
+                        if result:
+                            for num in col: # iterate across the boxes
+                                if num != col[1]: # dont do for this box
+                                    for cell in self.boxDict[num].cellList.flatten(): # we want to iterative through all the cells in the box
+                                        if not cell.known and cell.pos[1] == cols[1] and possible in cell.potentialNumbers:
+                                            print("New clue! From ",self.boxDict[num].ID)
+                                            cell.newNot(possible)
